@@ -24,7 +24,6 @@ if st.button("Zarejestruj się"):
     else:
         if wynik.empty:
             if password == password2:
-                st.success("Yay")
                 with conn.session as session:
                     session.execute(text("INSERT INTO test (name, pass) VALUES (:name, :pass)"), {"name": login, "pass": password})
                     session.commit()
