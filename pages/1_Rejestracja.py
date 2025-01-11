@@ -29,7 +29,7 @@ if st.button("Zarejestruj się"):
                     session.execute(text("INSERT INTO test (name, pass) VALUES (:name, :pass)"), {"name": login, "pass": password})
                     session.commit()
                     st.cache_data.clear()
-                    st.switch_page("logowanie.py")
+                    st.switch_page("Strona_startowa.py")
             else:
                 st.error("Podano różne hasła")
         else:

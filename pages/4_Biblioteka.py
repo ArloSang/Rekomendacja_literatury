@@ -8,6 +8,7 @@ if not st.session_state:
     st.stop()
 
 else:
+    st.info("Wszystkie dokonane zmiany będą widoczne po przelogowaniu")
     conn = st.connection("mysql", type="sql")
     wyloguj = st.sidebar.button("Wyloguj")
     if wyloguj:
@@ -30,6 +31,11 @@ else:
             with kolumny[idx % 5]: 
                 st.text(row['title'])  
                 st.image(row['img_url'], use_container_width=True) 
+                if st.button("Usun z biblioteki", key=idx):
+                    with conn.session as session:
+                        session.execute(text("DELETE FROM tabela2 WHERE User=:name AND title=:title"), {"name": uzytkownik, "title": row['title']})
+                        session.commit()
+                        st.success("Książka usunięta")
     else:
         st.warning("Nie masz jeszcze żadnych książek w swojej bibliotece.")
         if st.button("Powrót"):
