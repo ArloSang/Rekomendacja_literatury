@@ -1,42 +1,59 @@
 import streamlit as st
+from sqlalchemy import create_engine
 from sqlalchemy import text
+import json
 
-if not st.session_state:
-    st.info('Please Login from the Home page and try again.')
-    if st.button("Powrot na strone glowna"):
+def weryfikacja():
+    if not st.session_state:
+        st.session_state['autoryzacja'] = False
         st.switch_page("Strona_startowa.py")
-    st.stop()
-
-else:
-    st.info("Wszystkie dokonane zmiany będą widoczne po przelogowaniu")
-    conn = st.connection("mysql", type="sql")
-    wyloguj = st.sidebar.button("Wyloguj")
-    if wyloguj:
-        del st.session_state['autoryzacja']
-        del st.session_state['uzytkownik']
-        st.cache_data.clear()
+    
+    if st.session_state.autoryzacja == False:
         st.switch_page("Strona_startowa.py")
-    uzytkownik = st.session_state['uzytkownik']
 
-    query = "SELECT DISTINCT title, img_url FROM tabela2 WHERE User = :name"
-    params = {"name": uzytkownik}
-    lista = conn.query(query, params=params)
+    if "uzytkownik" not in st.session_state:
+        st.session_state['autoryzacja'] = False
+        st.switch_page("Strona_startowa.py")
+    return 0
+weryfikacja()
 
-    if not lista.empty:
-        st.header("Twoja Biblioteka")
-        rows = lista.to_dict('records')  
+wyloguj = st.sidebar.button("Wyloguj")
+if wyloguj:
+    del st.session_state['autoryzacja']
+    del st.session_state['uzytkownik']
+    st.cache_data.clear()
+    st.switch_page("Strona_startowa.py")
 
-        kolumny = st.columns(5)  
-        for idx, row in enumerate(rows):
-            with kolumny[idx % 5]: 
-                st.text(row['title'])  
-                st.image(row['img_url'], use_container_width=True) 
-                if st.button("Usun z biblioteki", key=idx):
-                    with conn.session as session:
-                        session.execute(text("DELETE FROM tabela2 WHERE User=:name AND title=:title"), {"name": uzytkownik, "title": row['title']})
-                        session.commit()
-                        st.success("Książka usunięta")
-    else:
-        st.warning("Nie masz jeszcze żadnych książek w swojej bibliotece.")
-        if st.button("Powrót"):
-            st.switch_page("pages/2_Profil.py")
+def zapytanie():
+    try:
+        with engine.connect() as connection:
+            query = text("SELECT DISTINCT title, img_url FROM tabela2 WHERE User=:name")
+            result = connection.execute(query, {"name": uzytkownik})
+            rows = result.fetchall()  
+            
+            if rows:
+                st.write("Zapisane książki:")
+                kolumny = st.columns(5)  
+                for idx, row in enumerate(rows):
+                    with kolumny[idx % 5]:
+                        st.text(row[0])
+                        st.image(row[1], use_container_width=True)
+                        if st.button("Usun", key=row):
+                            with engine.connect() as connection2:
+                                query2 = text("DELETE FROM tabela2 WHERE User=:name AND title=:title")
+                                connection2.execute(query2, {"name": uzytkownik, "title": row[0]})
+                                connection2.commit()
+                                st.rerun()
+            else:
+                st.warning("Brak tytułów w bazie dla podanego użytkownika.")
+    except Exception as e:
+        st.error(f"Wystąpił błąd podczas pobierania danych: {e}")
+
+#Ustalenie połączenia z bazą
+with open("dbconfig.json") as config_file:
+    config = json.load(config_file)
+connection_url = f"mysql+pymysql://{config['db_user']}:{config['db_password']}@{config['db_host']}:{config['db_port']}/{config['db_name']}"
+engine = create_engine(connection_url)
+uzytkownik = st.session_state['uzytkownik']
+
+zapytanie()

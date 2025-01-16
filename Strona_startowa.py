@@ -1,7 +1,13 @@
 import streamlit as st
 
-
 st.set_page_config(initial_sidebar_state="collapsed")
+
+if "autoryzacja" not in st.session_state:
+    st.session_state["autoryzacja"] = None
+
+if st.session_state.autoryzacja == False:
+    st.info("Proszę się zalogować")
+
 conn = st.connection("mysql", type="sql")
 st.header("Witaj w SRL - systemie rekomendacji literatury")
 
