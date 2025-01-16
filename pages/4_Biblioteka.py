@@ -25,6 +25,7 @@ if wyloguj:
     st.switch_page("Strona_startowa.py")
 
 def zapytanie():
+    st.header("Twoja biblioteka")
     try:
         with engine.connect() as connection:
             query = text("SELECT DISTINCT title, img_url FROM tabela2 WHERE User=:name")
@@ -32,7 +33,6 @@ def zapytanie():
             rows = result.fetchall()  
             
             if rows:
-                st.write("Zapisane książki:")
                 kolumny = st.columns(5)  
                 for idx, row in enumerate(rows):
                     with kolumny[idx % 5]:

@@ -22,15 +22,16 @@ if wyloguj:
     st.switch_page("Strona_startowa.py")
 
 tekst = st.session_state.uzytkownik
-st.header(f"Witaj, {tekst}!")
-# Pobieranie wartości id
-id_value = st.query_params.get("id", [None])[0]
+kolumna = st.columns(1)
+with kolumna[0]:
+    st.markdown(f"<h1 style='text-align: center;'>Witaj, {st.session_state['uzytkownik']}</h1>", unsafe_allow_html=True)
 
-if st.button("Poszukaj nowych książek!"):
-    st.switch_page("pages/3_Rekomendacja.py")
-    
-if st.button("Przeglądaj swoją bibliotekę"):
-    st.switch_page("pages/4_Biblioteka.py")
-    
-if st.button("Dodaj książki do biblioteki"):
-    st.switch_page("pages/4_Biblioteka.py")
+
+    if st.button("Poszukaj nowych książek!", use_container_width=True):
+        st.switch_page("pages/3_Rekomendacja.py")
+        
+    if st.button("Przeglądaj swoją bibliotekę", use_container_width=True):
+        st.switch_page("pages/4_Biblioteka.py")
+        
+    if st.button("Dodaj książki do biblioteki", use_container_width=True):
+        st.switch_page("pages/4_Biblioteka.py")
