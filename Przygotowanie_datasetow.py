@@ -1,8 +1,7 @@
-import streamlit as st
+
 import pandas as pd 
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 books = pd.read_csv('data/Books.csv')
 #st.write(books.head(2))
@@ -41,7 +40,7 @@ rating_books = ratings.merge(books, on = 'ISBN')
 # print(rating_books.head())
 
 num_rating = rating_books.groupby('title')['rating'].count().reset_index()
-# print(num_rating.head())
+#print(num_rating.sort_values(by=['rating'], ascending=False))
 
 num_rating.rename(columns={"rating":"number_of_ratings"}, inplace=True)
 
@@ -51,8 +50,11 @@ final_rating = final_rating[final_rating['number_of_ratings']>=50]
 
 final_rating.drop_duplicates(['user_id','title'], inplace=True)
 
+#print(final_rating.sort_values(by=['number_of_ratings'], ascending=False))
 # print(final_rating.shape)
-
+ilosc_recenzji = final_rating[['ISBN','title', 'number_of_ratings', 'img_url']]
+ilosc_recenzji.drop_duplicates(['title','number_of_ratings'], inplace=True)
+# print(ilosc_recenzji.sort_values(by=['number_of_ratings'], ascending=False))
 book_pivot = final_rating.pivot_table(columns='user_id', index='title', values='rating')
 book_pivot.fillna(0, inplace=True) 
 
@@ -72,12 +74,12 @@ distance, suggestion = model.kneighbors(book_pivot.iloc[237,:].values.reshape(1,
 
 books_name = book_pivot.index
 
-# import pickle
+import pickle
+pickle.dump(ilosc_recenzji, open('artifacts/ilosc_recenzji.pkl','wb'))
 # pickle.dump(model, open('artifacts/model.pkl','wb'))
 # pickle.dump(books_name, open('artifacts/books_names.pkl','wb'))
 # pickle.dump(final_rating, open('artifacts/final_rating.pkl','wb'))
 # pickle.dump(book_pivot, open('artifacts/book_pivot.pkl','wb'))
-print(final_rating.head())
 def recommend_book(book_name):
     book_id = np.where(book_pivot.index == book_name)[0][0]
     distance, suggestion = model.kneighbors(book_pivot.iloc[book_id,:].values.reshape(1,-1), n_neighbors=6)
@@ -88,4 +90,4 @@ def recommend_book(book_name):
             print(j)
 
 book_name = 'Harry Potter and the Chamber of Secrets (Book 2)'
-recommend_book(book_name)
+# recommend_book(book_name)

@@ -8,6 +8,10 @@ if "autoryzacja" not in st.session_state:
 if st.session_state.autoryzacja == False:
     st.info("Proszę się zalogować")
 
+if st.session_state.autoryzacja == True:
+    st.switch_page("pages/2_Profil.py")
+
+
 conn = st.connection("mysql", type="sql")
 st.header("Witaj w SRL - systemie rekomendacji literatury")
 

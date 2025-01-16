@@ -80,7 +80,7 @@ if "selected_option" not in st.session_state:
     st.session_state["selected_option"] = None
 
 st.header("System rekomendacji literatury")
-selected = st.selectbox("Wpis albo wyszukaj tytuł z listy",books_names, index=None)
+selected = st.selectbox("Wpis albo wyszukaj tytuł na bazie którego chcesz otrzymać rekomendację",books_names, index=None)
 
 def update_selection():
     st.session_state["selected_option"] = selected

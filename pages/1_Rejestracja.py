@@ -1,6 +1,9 @@
 import streamlit as st
 from sqlalchemy import text
 
+if st.session_state.autoryzacja == True:
+    st.switch_page("pages/2_Profil.py")
+    
 st.set_page_config(initial_sidebar_state="collapsed")
 conn = st.connection("mysql", type="sql")
 st.header("Załóż konto")
