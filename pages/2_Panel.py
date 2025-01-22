@@ -56,8 +56,8 @@ st.markdown("<h1 style='text-align: center;'>Najpopularniejsze książki</h1>", 
 columns = st.columns(3)
 for x in range(3):
     with columns[x]:
-        st.write(ranking.iloc[x]['title'])
-        st.image(ranking.iloc[x]['img_url'])
+        st.write(ranking.iloc[x]['title'],use_container_width=True)
+        st.image(ranking.iloc[x]['img_url'],use_container_width=True)
         try:
             with engine.connect() as connection:
                 if st.button(f"Sprawdź tytuły podobne do tej książki!", key=x, use_container_width=True):
