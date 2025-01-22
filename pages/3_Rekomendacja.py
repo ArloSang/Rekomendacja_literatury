@@ -84,7 +84,7 @@ def rekomendacja(ksiazka):
     for x in range(0,5):
         with kol[x]:
             st.text(recommendation_books[x+1])
-            st.image(poster_url[x+1])
+            st.image(poster_url[x+1], use_container_width=True)
             try:
                 with engine.connect() as connection:
                     query = text("SELECT name FROM Biblioteka where name=:name and title= :zmienna")
@@ -118,6 +118,5 @@ if "selected_option" not in st.session_state:
 
 if selected is not None:
     update_selection()
-    st.write("Wybrana opcja:", st.session_state["selected_option"])
     rekomendacja(st.session_state["selected_option"])
     
