@@ -28,7 +28,7 @@ def zapytanie():
     st.header("Twoja biblioteka")
     try:
         with engine.connect() as connection:
-            query = text("SELECT DISTINCT title, img_url FROM tabela2 WHERE User=:name")
+            query = text("SELECT DISTINCT title, img_url FROM Biblioteka WHERE name=:name")
             result = connection.execute(query, {"name": uzytkownik})
             rows = result.fetchall()  
             
@@ -38,9 +38,12 @@ def zapytanie():
                     with kolumny[idx % 5]:
                         st.text(row[0])
                         st.image(row[1], use_container_width=True)
-                        if st.button("Usun", key=row):
+                        if st.button(f"Sprawdź tytuły podobne do tej książki!", key=idx, use_container_width=True):
+                            st.session_state['transport'] = row[0]
+                            st.switch_page("pages/3_Rekomendacja.py")
+                        if st.button("Usun", key=row, use_container_width=True):
                             with engine.connect() as connection2:
-                                query2 = text("DELETE FROM tabela2 WHERE User=:name AND title=:title")
+                                query2 = text("DELETE FROM Biblioteka WHERE name=:name AND title=:title")
                                 connection2.execute(query2, {"name": uzytkownik, "title": row[0]})
                                 connection2.commit()
                                 st.rerun()

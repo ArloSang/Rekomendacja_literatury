@@ -52,7 +52,7 @@ if selected is not None:
     update_selection()
     try:
         with engine.connect() as connection:
-            query = text("SELECT User FROM tabela2 where User=:name and title= :zmienna")
+            query = text("SELECT name FROM Biblioteka where name=:name and title= :zmienna")
             result = connection.execute(query, {"name":uzytkownik,"zmienna": st.session_state["selected_option"]})
             row = result.fetchone()
             if row:
@@ -63,7 +63,7 @@ if selected is not None:
                     y = final_rating[x:x+1]
                     try:
                         with engine.connect() as connection:
-                            query = text("INSERT INTO tabela2 (User, ISBN, title, img_url) VALUES (:name, :isbn, :title, :img)")
+                            query = text("INSERT INTO Biblioteka (name, ISBN, title, img_url) VALUES (:name, :isbn, :title, :img)")
                             connection.execute(query, {"name": uzytkownik,"isbn": y['ISBN'].values[0], "title": st.session_state["selected_option"], "img": y['img_url'].values[0]})
                             connection.commit()
                             st.rerun()

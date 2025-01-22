@@ -51,7 +51,6 @@ def fetch_poster(suggestion):
     for idx in ids_index:
         url = final_rating.iloc[idx]['img_url']
         poster_url.append(url)
-
         isbn = final_rating.iloc[idx]['ISBN']
         isbn_numbers.append(isbn)
     
@@ -76,19 +75,11 @@ with open("dbconfig.json") as config_file:
 connection_url = f"mysql+pymysql://{config['db_user']}:{config['db_password']}@{config['db_host']}:{config['db_port']}/{config['db_name']}"
 engine = create_engine(connection_url)
 
-if "selected_option" not in st.session_state:
-    st.session_state["selected_option"] = None
-
 st.header("System rekomendacji literatury")
 selected = st.selectbox("Wpis albo wyszukaj tytuł na bazie którego chcesz otrzymać rekomendację",books_names, index=None)
 
-def update_selection():
-    st.session_state["selected_option"] = selected
-
-if selected is not None:
-    update_selection()
-    st.write("Wybrana opcja:", st.session_state["selected_option"])
-    recommendation_books, poster_url, isbn_numbers = recommend_books(st.session_state["selected_option"])
+def rekomendacja(ksiazka):
+    recommendation_books, poster_url, isbn_numbers = recommend_books(ksiazka)
     kol = st.columns(5)
     for x in range(0,5):
         with kol[x]:
@@ -96,16 +87,16 @@ if selected is not None:
             st.image(poster_url[x+1])
             try:
                 with engine.connect() as connection:
-                    query = text("SELECT User FROM tabela2 where User=:name and title= :zmienna")
+                    query = text("SELECT name FROM Biblioteka where name=:name and title= :zmienna")
                     result = connection.execute(query, {"name":uzytkownik,"zmienna": recommendation_books[x+1]})
                     row = result.fetchone()
                     if row:
                         st.success("Książka już się znajduje w bibliotece!")
                     else:
-                        if st.button(f"Dodaj {x+1} pozycję do swojej biblioteki!"):
+                        if st.button(f"Dodaj {x+1} pozycję do swojej biblioteki!", use_container_width=True):
                             try:
                                 with engine.connect() as connection2:
-                                    query2 = text("INSERT INTO tabela2 (User, ISBN, title, img_url) VALUES (:name, :isbn, :title, :img_url)")
+                                    query2 = text("INSERT INTO Biblioteka (name, ISBN, title, img_url) VALUES (:name, :isbn, :title, :img_url)")
                                     connection2.execute(query2, {"name":uzytkownik, "isbn": isbn_numbers[x+1], "title": recommendation_books[x+1], "img_url": poster_url[x+1]})
                                     connection2.commit()
                                     st.rerun()
@@ -113,3 +104,20 @@ if selected is not None:
                                 st.error(f"Błąd podczas dodawania pozycji do bazy: {e}")
             except Exception as e:
                 st.warning(f"huh, {e}")
+
+if "transport" in st.session_state:
+    st.write(st.session_state["transport"])
+    rekomendacja(st.session_state["transport"])
+    del st.session_state["transport"]
+
+def update_selection():
+    st.session_state["selected_option"] = selected
+    
+if "selected_option" not in st.session_state:
+    st.session_state["selected_option"] = None
+
+if selected is not None:
+    update_selection()
+    st.write("Wybrana opcja:", st.session_state["selected_option"])
+    rekomendacja(st.session_state["selected_option"])
+    
