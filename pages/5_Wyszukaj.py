@@ -71,3 +71,4 @@ if selected is not None:
                         st.error(f"Wystąpił błąd podczas wprowadzania danych: {e}")
     except Exception as e:
         st.error(f"Wystąpił błąd podczas wprowadzania danych: {e}")
+st.button("Nie widzisz książki? Daj nam znać!")
