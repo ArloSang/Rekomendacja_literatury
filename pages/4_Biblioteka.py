@@ -21,6 +21,7 @@ wyloguj = st.sidebar.button("Wyloguj")
 if wyloguj:
     del st.session_state['autoryzacja']
     del st.session_state['uzytkownik']
+    del st.session_state['ksiazki']
     st.cache_data.clear()
     st.switch_page("Strona_startowa.py")
 
@@ -28,7 +29,7 @@ def zapytanie():
     st.header("Twoja biblioteka")
     try:
         with engine.connect() as connection:
-            query = text("SELECT DISTINCT title, img_url FROM Biblioteka WHERE name=:name")
+            query = text("SELECT title, img_url FROM Biblioteka WHERE name=:name")
             result = connection.execute(query, {"name": uzytkownik})
             rows = result.fetchall()  
             

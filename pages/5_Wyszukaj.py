@@ -25,6 +25,7 @@ wyloguj = st.sidebar.button("Wyloguj")
 if wyloguj:
     del st.session_state['autoryzacja']
     del st.session_state['uzytkownik']
+    del st.session_state['ksiazki']
     st.cache_data.clear()
     st.switch_page("Strona_startowa.py")
 

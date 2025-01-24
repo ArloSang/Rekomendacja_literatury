@@ -22,6 +22,7 @@ wyloguj = st.sidebar.button("Wyloguj")
 if wyloguj:
     del st.session_state['autoryzacja']
     del st.session_state['uzytkownik']
+    del st.session_state['ksiazki']
     st.cache_data.clear()
     st.switch_page("Strona_startowa.py")
 
@@ -36,7 +37,7 @@ kolumna = st.columns(1)
 with kolumna[0]:
     st.markdown(f"<h1 style='text-align: center;'>Witaj, {uzytkownik}</h1>", unsafe_allow_html=True)
 
-    if st.button("Dodaj książki do biblioteki", use_container_width=True):
+    if st.button("Wyszukaj ksiązki w katalogu", use_container_width=True):
         st.switch_page("pages/5_Wyszukaj.py")
 
     if st.button("Poszukaj nowych książek!", use_container_width=True):
@@ -56,7 +57,7 @@ st.markdown("<h1 style='text-align: center;'>Najpopularniejsze książki</h1>", 
 columns = st.columns(3)
 for x in range(3):
     with columns[x]:
-        st.markdown(f"<h2 style='text-align: center;'>{ranking.iloc[x]['title']}</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h4 style='text-align: center;'>{ranking.iloc[x]['title']}</h4>", unsafe_allow_html=True)
         st.image(ranking.iloc[x]['img_url'],use_container_width=True)
         try:
             with engine.connect() as connection:

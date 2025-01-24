@@ -22,13 +22,14 @@ wyloguj = st.sidebar.button("Wyloguj")
 if wyloguj:
     del st.session_state['autoryzacja']
     del st.session_state['uzytkownik']
+    del st.session_state['ksiazki']
     st.cache_data.clear()
     st.switch_page("Strona_startowa.py")
 
 # weryfikacja użytkownika
 weryfikacja()
 
-# Implementacja danych
+# Wczytywanie danych
 model = pickle.load(open('artifacts/model.pkl','rb'))
 books_names = pickle.load(open('artifacts/books_names.pkl','rb'))
 book_pivot = pickle.load(open('artifacts/book_pivot.pkl','rb'))
