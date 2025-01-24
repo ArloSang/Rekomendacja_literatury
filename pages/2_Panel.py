@@ -57,7 +57,7 @@ st.markdown("<h1 style='text-align: center;'>Najpopularniejsze książki</h1>", 
 columns = st.columns(3)
 for x in range(3):
     with columns[x]:
-        st.markdown(f"<h4'>{ranking.iloc[x]['title']}</h4>", unsafe_allow_html=True)
+        st.markdown(f"<h4>{ranking.iloc[x]['title']}</h4>", unsafe_allow_html=True)
         st.image(ranking.iloc[x]['img_url'],use_container_width=True)
         try:
             with engine.connect() as connection:
