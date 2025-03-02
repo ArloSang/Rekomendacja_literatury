@@ -33,7 +33,7 @@ def logowanie():
             st.error("Podano niewłaściwe dane logowania")
     else:
         st.error("Podano niewłaściwe dane logowania")
-
+st.markdown("<h1 style='text-align: center;'>Witaj w systemie rekomendacji</h1>", unsafe_allow_html=True)
 login = st.text_input("Nazwa użytkownika: ")
 password = st.text_input("Hasło: ", type="password")
 lewy, prawy = st.columns(2)
